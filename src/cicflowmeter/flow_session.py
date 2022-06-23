@@ -112,7 +112,7 @@ class FlowSession(DefaultSession):
             if (
                 latest_time is None
                 or latest_time - flow.latest_timestamp > EXPIRED_UPDATE
-                or flow.duration > 10
+                or flow.duration > 90
             ):
                 data = flow.get_data()
 
