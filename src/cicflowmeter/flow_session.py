@@ -129,7 +129,7 @@ class FlowSession(DefaultSession):
                                     data['flow_pkts_s'],
                                     data['flow_iat_min'],
                                     data['flow_iat_max'],
-                                    (data['flow_iat_min']+data['flow_iat_max']),
+                                    data['fwd_iat_tot'],
                                     data['flow_iat_mean'],
                                     data['flow_iat_std'],
                                     "Decision Tree"
