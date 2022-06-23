@@ -141,9 +141,9 @@ class FlowSession(DefaultSession):
                 #print(data)
                 #formated result
                 if(response["class_id"] == "0"):
-                    print(f'Detected normal flow (class ID {response["class_id"]}, using {response["classification"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
+                    print(f'Detected normal flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
                 else:
-                    print(f'Detected attack flow (class ID {response["class_id"]}, using {response["classification"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
+                    print(f'Detected attack flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
 
 
                 if self.csv_line == 0:
