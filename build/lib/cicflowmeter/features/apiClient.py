@@ -1,4 +1,3 @@
-
 import requests
 import json
 
@@ -59,10 +58,7 @@ class Request:
         self.stddev = stddev
 
     def apiCall(self):
-        print("API CALL")
+        #print("API CALL")
         headers = {'Content-type': 'application/json'}
         response = requests.post(MODEL_URL,data=json.dumps(self.__dict__),headers=headers) 
-        return response.content
-       
-    
-        
+        return response.content  
