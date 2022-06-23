@@ -6,6 +6,7 @@ from scapy.sessions import DefaultSession
 from .features.context.packet_direction import PacketDirection
 from .features.context.packet_flow_key import get_packet_flow_key
 from .flow import Flow
+from .apiClient import Request
 
 EXPIRED_UPDATE = 40
 MACHINE_LEARNING_API = "http://localhost:8000/predict"
@@ -114,6 +115,27 @@ class FlowSession(DefaultSession):
                 or flow.duration > 90
             ):
                 data = flow.get_data()
+
+                request =  Request(
+                                    data['flow_duration'],
+                                    data['fwd_header_len'],
+                                    data['bwd_header_len'],
+                                    (data['fwd_header_len'] + data['bwd_header_len']),
+                                    data['tot_fwd_pkts'],
+                                    data['tot_bwd_pkts'],
+                                    (data['tot_fwd_pkts'] + data['tot_bwd_pkts']),
+                                    data['fwd_pkts_s'],
+                                    data['bwd_pkts_s'],
+                                    data['flow_pkts_s'],
+                                    data['flow_iat_min'],
+                                    data['flow_iat_max'],
+                                    (data['flow_iat_min']+data['flow_iat_max']),
+                                    data['flow_iat_mean'],
+                                    data['flow_iat_std'],
+                                    "Decision Tree"
+                                    )
+
+                print(request.apiCall())
 
                 if self.csv_line == 0:
                     self.csv_writer.writerow(data.keys())
