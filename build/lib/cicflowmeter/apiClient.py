@@ -24,21 +24,21 @@ MODEL_URL = "https://thesis-ddos.herokuapp.com/api/identify/"
 class Request:
 
     def __init__(self,
-                dur,
-                sbytes,
-                dbytes,
-                bytes,
-                spkts,
-                dpkts,
                 pkts,
-                srate,
-                drate,
-                rate,
-                min,
-                max,
-                sum,
+                bytes,
+                dur,
                 mean,
                 stddev,
+                sum,
+                min,
+                max,
+                spkts,
+                dpkts,
+                sbytes,
+                dbytes,
+                rate,
+                srate,
+                drate,
                 model_name):
         self.dur = dur
         self.sbytes = sbytes
@@ -59,6 +59,37 @@ class Request:
 
     def apiCall(self):
         #print("API CALL")
+        order = {
+            'pkts': 0,
+            'bytes': 1,
+            'dur': 2,
+            'mean': 3,
+            'stddev': 4,
+            'sum': 5,
+            'min': 6,
+            'max': 7,
+            'spkts': 8,
+            'dpkts': 9,
+            'sbytes': 10,
+            'dbytes': 11,
+            'rate': 12,
+            'srate': 13,
+            'drate': 14,
+        }
+
+        payload = self.__dict__
+        model_name = ''
+        data = [None] * len(order)
+        for key, value in payload.items():
+            if key == 'model_name':
+                model_name = value
+            else:
+                data[order[key]] = value
+        
+        if model_name == '':
+            model_name = 'Decision Tree'
+
         headers = {'Content-type': 'application/json'}
+        print(json.dumps(payload))
         response = requests.post(MODEL_URL,data=json.dumps(self.__dict__),headers=headers) 
         return response.json()  

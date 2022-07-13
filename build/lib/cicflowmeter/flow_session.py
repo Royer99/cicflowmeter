@@ -1,16 +1,19 @@
 import csv
 from collections import defaultdict
 
+
 from scapy.sessions import DefaultSession
 
 from .features.context.packet_direction import PacketDirection
 from .features.context.packet_flow_key import get_packet_flow_key
 from .flow import Flow
 from .apiClient import Request
+#from .onosClient import OnosClient
 
 EXPIRED_UPDATE = 40
 MACHINE_LEARNING_API = "http://localhost:8000/predict"
 GARBAGE_COLLECT_PACKETS = 100
+THRESHOLD = 10
 
 
 class FlowSession(DefaultSession):
@@ -19,6 +22,7 @@ class FlowSession(DefaultSession):
     def __init__(self, *args, **kwargs):
         self.flows = {}
         self.csv_line = 0
+        self.ipTable = {}
 
         if self.output_mode == "flow":
             output = open(self.output_file, "w")
@@ -104,7 +108,8 @@ class FlowSession(DefaultSession):
     def garbage_collect(self, latest_time) -> None:
         # TODO: Garbage Collection / Feature Extraction should have a separate thread
         if not self.url_model:
-            print("Garbage Collection Began. Flows = {}".format(len(self.flows)))
+            #print("Garbage Collection Began. Flows = {}".format(len(self.flows)))
+            pass
         keys = list(self.flows.keys())
         for k in keys:
             flow = self.flows.get(k)
@@ -112,39 +117,47 @@ class FlowSession(DefaultSession):
             if (
                 latest_time is None
                 or latest_time - flow.latest_timestamp > EXPIRED_UPDATE
-                or flow.duration > 10
+                or flow.duration > 90
             ):
                 data = flow.get_data()
 
                 request =  Request(
-                                    data['flow_duration'],
-                                    data['fwd_header_len'],
-                                    data['bwd_header_len'],
-                                    (data['fwd_header_len'] + data['bwd_header_len']),
-                                    data['tot_fwd_pkts'],
-                                    data['tot_bwd_pkts'],
                                     (data['tot_fwd_pkts'] + data['tot_bwd_pkts']),
-                                    data['fwd_pkts_s'],
-                                    data['bwd_pkts_s'],
-                                    data['flow_pkts_s'],
-                                    data['flow_iat_min'],
-                                    data['flow_iat_max'],
-                                    data['fwd_iat_tot'],
+                                    (data['fwd_header_len'] + data['bwd_header_len']),
+                                    data['flow_duration'],
                                     data['flow_iat_mean'],
                                     data['flow_iat_std'],
+                                    data['fwd_iat_tot'],
+                                    data['flow_iat_min'],
+                                    data['flow_iat_max'],
+                                    data['tot_fwd_pkts'],
+                                    data['tot_bwd_pkts'],
+                                    data['fwd_header_len'],
+                                    data['bwd_header_len'],
+                                    data['flow_pkts_s'],
+                                    data['fwd_pkts_s'],
+                                    data['bwd_pkts_s'],
                                     "Decision Tree"
                                     )
-
                 response = request.apiCall()
                 #print(type(response))
                 #print(response)
                 #print(data)
                 #formated result
                 if(response["class_id"] == "0"):
-                    print(f'Detected normal flow (class ID {response["class_id"]}, using {response["classification"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
+                    print(f'Detected normal flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
                 else:
-                    print(f'Detected attack flow (class ID {response["class_id"]}, using {response["classification"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
-
+                    print(f'Detected attack flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
+                    print(data["src_ip"])
+                    print(self.packets_count)
+                    if(data["src_ip"] not in self.ipTable):
+                        self.ipTable[data["src_ip"]] = 1
+                    else:
+                        self.ipTable[data["src_ip"]] += 1
+                    print(self.ipTable)
+                    if(self.ipTable[data["src_ip"]]>=THRESHOLD):
+                        print("ONOS CALL")
+                        #OnosClient.block()
 
                 if self.csv_line == 0:
                     self.csv_writer.writerow(data.keys())
@@ -154,7 +167,8 @@ class FlowSession(DefaultSession):
 
                 del self.flows[k]
         if not self.url_model:
-            print("Garbage Collection Finished. Flows = {}".format(len(self.flows)))
+            #print("Garbage Collection Finished. Flows = {}".format(len(self.flows)))
+            pass
 
 
 def generate_session_class(output_mode, output_file, url_model):

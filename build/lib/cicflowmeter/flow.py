@@ -62,6 +62,12 @@ class Flow:
         self.backward_bulk_packet_count = 0
         self.backward_bulk_size = 0
         self.backward_bulk_size_tmp = 0
+        self.sumDuration = 0
+        self.minDuration = 0
+        self.maxDuration = 0
+        self.meanDuration = 0
+        self.stdDuration = 0
+        self.flows = 0
 
     def get_data(self) -> dict:
         """This method obtains the values of the features extracted from each flow.
