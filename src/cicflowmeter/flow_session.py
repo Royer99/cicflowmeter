@@ -8,7 +8,7 @@ from .features.context.packet_direction import PacketDirection
 from .features.context.packet_flow_key import get_packet_flow_key
 from .flow import Flow
 from .apiClient import Request
-#from .onosClient import OnosClient
+from .onosClient import OnosClient
 
 EXPIRED_UPDATE = 40
 MACHINE_LEARNING_API = "http://localhost:8000/predict"
@@ -159,7 +159,7 @@ class FlowSession(DefaultSession):
                     print(self.ipTable)
                     if(self.ipTable[data["src_ip"]]>=THRESHOLD):
                         print("ONOS CALL")
-                        #OnosClient.block()
+                        OnosClient.block(data["src_ip"])
 
                 if self.csv_line == 0:
                     self.csv_writer.writerow(data.keys())
