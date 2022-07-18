@@ -60,4 +60,4 @@ class OnosClient:
             print(response.status_code)
             #print(response.json())
     
-OnosClient.block('10.10.10.201/32')
+#OnosClient.block('10.10.10.201/32')

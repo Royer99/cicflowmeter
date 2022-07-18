@@ -75,6 +75,16 @@ def main():
         help="output file name (in flow mode) or directory (in sequence mode)",
     )
 
+    parser.add_argument(
+        "--threshold",
+        help="Threshold for number of packets to trigger ONOS",
+    )
+
+    parser.add_argument(
+        "--onos-url",
+        help="ONOS URL",
+    )
+
     args = parser.parse_args()
 
     sniffer = create_sniffer(

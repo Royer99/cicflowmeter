@@ -1,5 +1,7 @@
 from enum import Enum
 from typing import Any
+import statistics
+import math
 
 from . import constants
 from .features.context import packet_flow_key
@@ -67,7 +69,7 @@ class Flow:
         self.maxDuration = 0
         self.meanDuration = 0
         self.stdDuration = 0
-        self.flows = 0
+        self.flows = 2
 
     def get_data(self) -> dict:
         """This method obtains the values of the features extracted from each flow.
@@ -194,6 +196,15 @@ class Flow:
             "bwd_blk_rate_avg": float(
                 flow_bytes.get_bulk_rate(PacketDirection.REVERSE)
             ),
+
+            #aggregated features
+            "sumDuration": self.sumDuration,
+            "minDuration": self.minDuration,
+            "maxDuration": self.maxDuration,
+            "meanDuration": self.meanDuration,
+            "stdDuration": self.stdDuration,
+            "flows": self.flows,
+
         }
 
         # Duplicated features
@@ -347,6 +358,22 @@ class Flow:
                             packet.time - self.backward_bulk_last_timestamp
                         )
                     self.backward_bulk_last_timestamp = packet.time
+
+    def update_aggregated_features(self):
+        """Update aggregated features"""
+        self.flows +=1
+
+        self.sumDuration += self.duration
+        
+        if(self.minDuration == 0 or self.duration < self.minDuration):
+            self.minDuration = self.duration
+        
+        if(self.maxDuration == 0 or self.duration > self.maxDuration):
+            self.maxDuration = self.duration
+        
+        self.meanDuration = self.meanDuration / self.flows
+
+        self.stdDuration = math.sqrt((self.duration-self.meanDuration)**2/self.flows-1)
 
     @property
     def duration(self):

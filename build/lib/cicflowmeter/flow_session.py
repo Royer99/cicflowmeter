@@ -8,7 +8,7 @@ from .features.context.packet_direction import PacketDirection
 from .features.context.packet_flow_key import get_packet_flow_key
 from .flow import Flow
 from .apiClient import Request
-#from .onosClient import OnosClient
+from .onosClient import OnosClient
 
 EXPIRED_UPDATE = 40
 MACHINE_LEARNING_API = "http://localhost:8000/predict"
@@ -119,26 +119,30 @@ class FlowSession(DefaultSession):
                 or latest_time - flow.latest_timestamp > EXPIRED_UPDATE
                 or flow.duration > 90
             ):
+                #TODO: update aggreted features
+                flow.update_aggregated_features()
+                
                 data = flow.get_data()
 
                 request =  Request(
-                                    (data['tot_fwd_pkts'] + data['tot_bwd_pkts']),
-                                    (data['fwd_header_len'] + data['bwd_header_len']),
                                     data['flow_duration'],
-                                    data['flow_iat_mean'],
-                                    data['flow_iat_std'],
-                                    data['fwd_iat_tot'],
-                                    data['flow_iat_min'],
-                                    data['flow_iat_max'],
-                                    data['tot_fwd_pkts'],
-                                    data['tot_bwd_pkts'],
                                     data['fwd_header_len'],
                                     data['bwd_header_len'],
-                                    data['flow_pkts_s'],
+                                    (data['fwd_header_len'] + data['bwd_header_len']),
+                                    data['tot_fwd_pkts'],
+                                    data['tot_bwd_pkts'],
+                                    (data['tot_fwd_pkts'] + data['tot_bwd_pkts']),
                                     data['fwd_pkts_s'],
                                     data['bwd_pkts_s'],
+                                    data['flow_pkts_s'],
+                                    data['minDuration'],
+                                    data['maxDuration'],
+                                    data['sumDuration'],
+                                    data['meanDuration'],
+                                    data['stdDuration'],
                                     "Decision Tree"
                                     )
+
                 response = request.apiCall()
                 #print(type(response))
                 #print(response)
@@ -157,7 +161,7 @@ class FlowSession(DefaultSession):
                     print(self.ipTable)
                     if(self.ipTable[data["src_ip"]]>=THRESHOLD):
                         print("ONOS CALL")
-                        #OnosClient.block()
+                        OnosClient.block(data["src_ip"])
 
                 if self.csv_line == 0:
                     self.csv_writer.writerow(data.keys())

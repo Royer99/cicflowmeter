@@ -120,6 +120,8 @@ class FlowSession(DefaultSession):
                 or flow.duration > 90
             ):
                 #TODO: update aggreted features
+                flow.update_aggregated_features()
+                
                 data = flow.get_data()
 
                 request =  Request(
@@ -133,11 +135,11 @@ class FlowSession(DefaultSession):
                                     data['fwd_pkts_s'],
                                     data['bwd_pkts_s'],
                                     data['flow_pkts_s'],
-                                    data['flow_iat_min'],
-                                    data['flow_iat_max'],
-                                    data['fwd_iat_tot'],
-                                    data['flow_iat_mean'],
-                                    data['flow_iat_std'],
+                                    data['minDuration'],
+                                    data['maxDuration'],
+                                    data['sumDuration'],
+                                    data['meanDuration'],
+                                    data['stdDuration'],
                                     "Decision Tree"
                                     )
 
