@@ -70,6 +70,7 @@ class Flow:
         self.meanDuration = 0
         self.stdDuration = 0
         self.flows = 0
+        self.sqrtsumduration = 0
 
     def get_data(self) -> dict:
         """This method obtains the values of the features extracted from each flow.
@@ -372,14 +373,14 @@ class Flow:
         
             self.maxDuration = self.duration
 
-        if(self.flows == 0):
+        if(self.flows < 2):
             self.meanDuration = 0
         else:
             self.meanDuration = self.sumDuration / self.flows
 
         self.sqrtsumduration += (self.duration * self.duration)
 
-        if(self.flows == 0):
+        if(self.flows < 2):
             self.stdDuration = 0
         else:
             self.stdDuration = math.sqrt((self.sqrtsumduration-(self.sumDuration * self.sumDuration/self.flows))/(self.flows-1))
