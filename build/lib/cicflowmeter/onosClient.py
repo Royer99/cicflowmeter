@@ -19,7 +19,7 @@ class OnosClient:
         print("Devices")
         print( host+PATH + 'devices')
         url = host+PATH + 'devices'
-        response = requests.get(PATH + 'devices', auth=HTTPBasicAuth('onos','rocks'),headers=OnosClient.headers)
+        response = requests.get(url, auth=HTTPBasicAuth('onos','rocks'),headers=OnosClient.headers)
         #print(response.json())
         for device in response.json()['devices']:
             OnosClient.devices.append(device['id'])
