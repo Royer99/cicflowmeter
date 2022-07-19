@@ -6,11 +6,11 @@ from .flow_session import generate_session_class
 
 
 def create_sniffer(
-    input_file, input_interface, output_mode, output_file, url_model=None
+    input_file, input_interface, output_mode, output_file, url_model=None ,threshold=10, onos_url='http://127.0.0.1:8181',
 ):
-    assert (input_file is None) ^ (input_interface is None)
+    assert (input_file is None) ^ (input_interface is None) 
 
-    NewFlowSession = generate_session_class(output_mode, output_file, url_model)
+    NewFlowSession = generate_session_class(output_mode, output_file, url_model,threshold,onos_url)
 
     if input_file is not None:
         return AsyncSniffer(
@@ -75,7 +75,24 @@ def main():
         help="output file name (in flow mode) or directory (in sequence mode)",
     )
 
+    threshold_group = parser.add_mutually_exclusive_group(required=True)
+    threshold_group.add_argument(
+        "-threshold",
+        action="store",
+        dest="threshold",
+        help="Threshold for number of packets to trigger ONOS",
+    )
+
+    onos_group = parser.add_mutually_exclusive_group(required=True)
+    onos_group.add_argument(
+        "-onos_url",
+        action="store",
+        dest="onos_url",
+        help="ONOS URL",
+    )
+
     args = parser.parse_args()
+    print(args)
 
     sniffer = create_sniffer(
         args.input_file,
@@ -83,7 +100,10 @@ def main():
         args.output_mode,
         args.output,
         args.url_model,
+        args.threshold,
+        args.onos_url
     )
+
     sniffer.start()
 
     try:

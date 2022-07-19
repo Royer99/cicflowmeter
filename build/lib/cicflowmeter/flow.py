@@ -205,7 +205,6 @@ class Flow:
             "meanDuration": self.meanDuration,
             "stdDuration": self.stdDuration,
             "flows": self.flows,
-
         }
 
         # Duplicated features

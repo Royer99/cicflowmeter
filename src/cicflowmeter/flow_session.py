@@ -96,7 +96,7 @@ class FlowSession(DefaultSession):
 
         if not self.url_model:
             GARBAGE_COLLECT_PACKETS = 10000
-
+        GARBAGE_COLLECT_PACKETS = 10000
         if self.packets_count % GARBAGE_COLLECT_PACKETS == 0 or (
             flow.duration > 120 and self.output_mode == "flow"
         ):
@@ -150,18 +150,20 @@ class FlowSession(DefaultSession):
                 #formated result
                 if(response["class_id"] == "0"):
                     print(f'Detected normal flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
+                    print(self.threshold)
                 else:
                     print(f'Detected attack flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
                     print(data["src_ip"])
-                    print(self.packets_count)
+                    #print(self.packets_count)
                     if(data["src_ip"] not in self.ipTable):
                         self.ipTable[data["src_ip"]] = 1
                     else:
                         self.ipTable[data["src_ip"]] += 1
                     print(self.ipTable)
-                    if(self.ipTable[data["src_ip"]]>=THRESHOLD):
+                    #print(self.threshold)
+                    if(self.ipTable[data["src_ip"]]>=int(self.threshold)):
                         print("ONOS CALL")
-                        OnosClient.block(data["src_ip"])
+                        OnosClient.block(self.onos_url,data["src_ip"])
 
                 if self.csv_line == 0:
                     self.csv_writer.writerow(data.keys())
@@ -175,7 +177,8 @@ class FlowSession(DefaultSession):
             pass
 
 
-def generate_session_class(output_mode, output_file, url_model):
+def generate_session_class(output_mode, output_file, url_model,threshold,onos_url):
+    print(threshold)
     return type(
         "NewFlowSession",
         (FlowSession,),
@@ -183,5 +186,7 @@ def generate_session_class(output_mode, output_file, url_model):
             "output_mode": output_mode,
             "output_file": output_file,
             "url_model": url_model,
+            "threshold": threshold,
+            "onos_url": onos_url
         },
     )
