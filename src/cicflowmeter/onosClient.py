@@ -48,7 +48,7 @@ class OnosClient:
                         },   
                         { 
                             "type": "IPV4_SRC",   
-                            "ip": src_ip   
+                            "ip": src_ip+"/24"  
                         }     
                     ]      
                 }      
