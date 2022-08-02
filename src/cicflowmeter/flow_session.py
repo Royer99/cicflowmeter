@@ -140,7 +140,6 @@ class FlowSession(DefaultSession):
                                     data['sumDuration'],
                                     data['meanDuration'],
                                     data['stdDuration'],
-                                    "Decision Tree"
                                     )
 
                 response = request.apiCall()

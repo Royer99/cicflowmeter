@@ -38,8 +38,7 @@ class Request:
                 max,
                 sum,
                 mean,
-                stddev,
-                model_name):
+                stddev):
         self.dur = dur
         self.sbytes = sbytes
         self.spkts = spkts
@@ -50,7 +49,6 @@ class Request:
         self.pkts = pkts
         self.drate = drate
         self.min = min
-        self.model_name = model_name
         self.rate = rate
         self.bytes = bytes
         self.mean = mean
@@ -60,5 +58,5 @@ class Request:
     def apiCall(self):
         #print("API CALL")
         headers = {'Content-type': 'application/json'}
-        response = requests.post(MODEL_URL,data=json.dumps(self.__dict__),headers=headers) 
+        response = requests.post(MODEL_URL,data=json.dumps(self.__dict__),headers=headers,verify=False)
         return response.json()  
