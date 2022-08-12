@@ -19,7 +19,7 @@ import json
 # srate Source-to-destination packets per second.
 # stddev Standard deviation of the duration at records aggregate level.
 
-MODEL_URL = "https://thesis-ddos.herokuapp.com/api/identify/"
+MODEL_URL = "https://thesis-ddos.herokuapp.com/api/identify/occ"
 #MODEL_URL = "http://127.0.0.1:3000/"
 class Request:
 
@@ -59,4 +59,4 @@ class Request:
         #print("API CALL")
         headers = {'Content-type': 'application/json'}
         response = requests.post(MODEL_URL,data=json.dumps(self.__dict__),headers=headers,verify=False)
-        return response.json()  
+        return response.json()
