@@ -1,7 +1,7 @@
 import requests
 import json
 
-#features description
+# features description
 # dur Record total duration. - flow_duration
 # sbytes Source-to-destination bytes count.
 # spkts Source-to-destination packet count.
@@ -20,25 +20,28 @@ import json
 # stddev Standard deviation of the duration at records aggregate level.
 
 MODEL_URL = "https://thesis-ddos.herokuapp.com/api/identify/occ"
+#MODEL_URL = "https://thesis-ddos.herokuapp.com/api/identify"
 #MODEL_URL = "http://127.0.0.1:3000/"
+
+
 class Request:
 
     def __init__(self,
-                dur,
-                sbytes,
-                dbytes,
-                bytes,
-                spkts,
-                dpkts,
-                pkts,
-                srate,
-                drate,
-                rate,
-                min,
-                max,
-                sum,
-                mean,
-                stddev):
+                 dur,
+                 sbytes,
+                 dbytes,
+                 bytes,
+                 spkts,
+                 dpkts,
+                 pkts,
+                 srate,
+                 drate,
+                 rate,
+                 min,
+                 max,
+                 sum,
+                 mean,
+                 stddev):
         self.dur = dur
         self.sbytes = sbytes
         self.spkts = spkts
@@ -58,5 +61,5 @@ class Request:
     def apiCall(self):
         #print("API CALL")
         headers = {'Content-type': 'application/json'}
-        response = requests.post(MODEL_URL,data=json.dumps(self.__dict__),headers=headers,verify=False)
+        response = requests.post(MODEL_URL, data=json.dumps(self.__dict__), headers=headers, verify=False)
         return response.json()

@@ -23,6 +23,8 @@ class FlowSession(DefaultSession):
         self.flows = {}
         self.csv_line = 0
         self.ipTable = {}
+        self.attack_flows = 0
+        self.normal_flows = 0
 
         if self.output_mode == "flow":
             output = open(self.output_file, "w")
@@ -117,66 +119,72 @@ class FlowSession(DefaultSession):
             if (
                 latest_time is None
                 or latest_time - flow.latest_timestamp > EXPIRED_UPDATE
-                or flow.duration > 90
+                or flow.duration > 10
             ):
-                #TODO: update aggreted features
+                # TODO: update aggreted features
                 flow.update_aggregated_features()
-                
+
                 data = flow.get_data()
 
-                request =  Request(
-                                    data['flow_duration'],
-                                    data['fwd_header_len'],
-                                    data['bwd_header_len'],
-                                    (data['fwd_header_len'] + data['bwd_header_len']),
-                                    data['tot_fwd_pkts'],
-                                    data['tot_bwd_pkts'],
-                                    (data['tot_fwd_pkts'] + data['tot_bwd_pkts']),
-                                    data['fwd_pkts_s'],
-                                    data['bwd_pkts_s'],
-                                    data['flow_pkts_s'],
-                                    data['minDuration'],
-                                    data['maxDuration'],
-                                    data['sumDuration'],
-                                    data['meanDuration'],
-                                    data['stdDuration'],
-                                    )
+                request = Request(
+                    data['flow_duration'],
+                    data['fwd_header_len'],
+                    data['bwd_header_len'],
+                    (data['fwd_header_len'] + data['bwd_header_len']),
+                    data['tot_fwd_pkts'],
+                    data['tot_bwd_pkts'],
+                    (data['tot_fwd_pkts'] + data['tot_bwd_pkts']),
+                    data['fwd_pkts_s'],
+                    data['bwd_pkts_s'],
+                    data['flow_pkts_s'],
+                    data['minDuration'],
+                    data['maxDuration'],
+                    data['sumDuration'],
+                    data['meanDuration'],
+                    data['stdDuration'],
+                )
 
                 response = request.apiCall()
-                #print(type(response))
-                #print(response)
-                #print(data)
-                #formated result
-                if(response["class_id"] == "0"):
-                    print(f'Detected normal flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
+                # print(type(response))
+                # print(response)
+                # printself(data)
+                # formated result
+
+                if(response["class_id"] == "1"):
+                    print(
+                        f'Detected normal flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
                     print(self.threshold)
+                    self.normal_flows += 1
                 else:
-                    print(f'Detected attack flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
+                    self.attack_flows += 1
+                    print(
+                        f'Detected attack flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
                     print(data["src_ip"])
-                    #print(self.packets_count)
+                    # print(self.packets_count)
                     if(data["src_ip"] not in self.ipTable):
                         self.ipTable[data["src_ip"]] = 1
                     else:
                         self.ipTable[data["src_ip"]] += 1
                     print(self.ipTable)
-                    #print(self.threshold)
-                    if(self.ipTable[data["src_ip"]]>=int(self.threshold)):
+                    # print(self.threshold)
+                    if(self.ipTable[data["src_ip"]] >= int(self.threshold)):
                         print("ONOS CALL")
-                        OnosClient.block(self.onos_url,data["src_ip"])
+                        OnosClient.blo
+                        ck(self.onos_url, data["src_ip"])
 
                 if self.csv_line == 0:
                     self.csv_writer.writerow(data.keys())
 
                 self.csv_writer.writerow(data.values())
                 self.csv_line += 1
-
+                print("Nomal Flows: ", self.normal_flows, " Attack flows", self.attack_flows)
                 del self.flows[k]
         if not self.url_model:
             #print("Garbage Collection Finished. Flows = {}".format(len(self.flows)))
             pass
 
 
-def generate_session_class(output_mode, output_file, url_model,threshold,onos_url):
+def generate_session_class(output_mode, output_file, url_model, threshold, onos_url):
     print(threshold)
     return type(
         "NewFlowSession",
