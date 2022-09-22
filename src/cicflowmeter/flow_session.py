@@ -169,8 +169,7 @@ class FlowSession(DefaultSession):
                     # print(self.threshold)
                     if(self.ipTable[data["src_ip"]] >= int(self.threshold)):
                         print("ONOS CALL")
-                        OnosClient.blo
-                        ck(self.onos_url, data["src_ip"])
+                        OnosClient.block(self.onos_url, data["src_ip"])
 
                 if self.csv_line == 0:
                     self.csv_writer.writerow(data.keys())
