@@ -1,5 +1,6 @@
-import requests
 import json
+
+import requests
 
 # features description
 # dur Record total duration. - flow_duration
@@ -19,7 +20,8 @@ import json
 # srate Source-to-destination packets per second.
 # stddev Standard deviation of the duration at records aggregate level.
 
-MODEL_URL = "https://thesis-ddos.herokuapp.com/api/identify/occ"
+#MODEL_URL = "https://thesis-ddos.herokuapp.com/api/identify/occ"
+MODEL_URL = "http://54.172.102.91/classify"
 #MODEL_URL = "https://thesis-ddos.herokuapp.com/api/identify"
 #MODEL_URL = "http://127.0.0.1:3000/"
 
@@ -27,36 +29,38 @@ MODEL_URL = "https://thesis-ddos.herokuapp.com/api/identify/occ"
 class Request:
 
     def __init__(self,
-                 dur,
-                 sbytes,
-                 dbytes,
-                 bytes,
-                 spkts,
-                 dpkts,
-                 pkts,
-                 srate,
-                 drate,
-                 rate,
-                 min,
-                 max,
-                 sum,
-                 mean,
-                 stddev):
-        self.dur = dur
-        self.sbytes = sbytes
-        self.spkts = spkts
-        self.max = max
-        self.dbytes = dbytes
-        self.sum = sum
-        self.dpkts = dpkts
-        self.pkts = pkts
-        self.drate = drate
-        self.min = min
-        self.rate = rate
-        self.bytes = bytes
-        self.mean = mean
-        self.srate = srate
-        self.stddev = stddev
+                 Dur,
+                 SrcBytes,
+                 DstBytes,
+                 TotBytes,
+                 SrcPkts,
+                 DstPkts,
+                 TotPkts,
+                 SrcRate,
+                 DstRate,
+                 Rate,
+                 Min,
+                 Max,
+                 Sum,
+                 Mean,
+                 StdDev,
+                 model):
+        self.Dur = Dur
+        self.SrcBytes = SrcBytes
+        self.DstBytes = DstBytes
+        self.TotBytes = TotBytes
+        self.SrcPkts = SrcPkts
+        self.DstPkts = DstPkts
+        self.TotPkts = TotPkts
+        self.SrcRate = SrcRate
+        self.DstRate = DstRate
+        self.Rate = Rate
+        self.Min = Min
+        self.Max = Max
+        self.Sum = Sum
+        self.Mean = Mean
+        self.StdDev = StdDev
+        self.model = model
 
     def apiCall(self):
         #print("API CALL")
