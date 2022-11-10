@@ -142,6 +142,7 @@ class FlowSession(DefaultSession):
                     data['sumDuration'],
                     data['meanDuration'],
                     data['stdDuration'],
+                    "3"
                 )
 
                 response = request.apiCall()
