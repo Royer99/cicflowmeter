@@ -151,7 +151,7 @@ class FlowSession(DefaultSession):
                 # printself(data)
                 # formated result
 
-                if(response["class_id"] == "1"):
+                if(response["class"] == "0"):
                     print(
                         f'Detected normal flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
                     print(self.threshold)

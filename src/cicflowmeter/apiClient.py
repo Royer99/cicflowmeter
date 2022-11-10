@@ -66,4 +66,5 @@ class Request:
         #print("API CALL")
         headers = {'Content-type': 'application/json'}
         response = requests.post(MODEL_URL, data=json.dumps(self.__dict__), headers=headers, verify=False)
+        print(response)
         return response.json()
