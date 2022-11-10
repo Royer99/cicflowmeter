@@ -153,13 +153,13 @@ class FlowSession(DefaultSession):
 
                 if(response["class"] == "0"):
                     print(
-                        f'Detected normal flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
+                        f'Detected normal flow (class ID {response["class"]}, using ), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
                     print(self.threshold)
                     self.normal_flows += 1
                 else:
                     self.attack_flows += 1
                     print(
-                        f'Detected attack flow (class ID {response["class_id"]}, using {response["model"]}), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
+                        f'Detected attack flow (class ID {response["class"]}, using ), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
                     print(data["src_ip"])
                     # print(self.packets_count)
                     if(data["src_ip"] not in self.ipTable):
