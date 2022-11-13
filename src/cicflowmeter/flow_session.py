@@ -142,7 +142,7 @@ class FlowSession(DefaultSession):
                     data['sumDuration'],
                     data['meanDuration'],
                     data['stdDuration'],
-                    "3"
+                    3
                 )
 
                 response = request.apiCall()
@@ -151,7 +151,7 @@ class FlowSession(DefaultSession):
                 # printself(data)
                 # formated result
 
-                if(response["class"] == 0):
+                if(response["class"] == 1):
                     print(
                         f'Detected normal flow (class ID {response["class"]}, using ), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
                     print(self.threshold)
