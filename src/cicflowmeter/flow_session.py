@@ -130,18 +130,22 @@ class FlowSession(DefaultSession):
                     data['flow_duration'],
                     data['fwd_header_len'],
                     data['bwd_header_len'],
-                    (data['fwd_header_len'] + data['bwd_header_len']),
+                    #(data['fwd_header_len'] + data['bwd_header_len']),
                     data['tot_fwd_pkts'],
                     data['tot_bwd_pkts'],
-                    (data['tot_fwd_pkts'] + data['tot_bwd_pkts']),
+                    #(data['tot_fwd_pkts'] + data['tot_bwd_pkts']),
                     data['fwd_pkts_s'],
                     data['bwd_pkts_s'],
                     data['flow_pkts_s'],
-                    data['minDuration'],
-                    data['maxDuration'],
-                    data['sumDuration'],
-                    data['meanDuration'],
-                    data['stdDuration'],
+                    # data['minDuration'],
+                    # data['maxDuration'],
+                    # data['sumDuration'],
+                    # data['meanDuration'],
+                    # data['stdDuration'],
+                    data['flow_iat_min'],
+                    data['flow_iat_max'],
+                    data['flow_iat_mean'],
+                    data['flow_iat_std'],
                     3
                 )
 
@@ -154,7 +158,7 @@ class FlowSession(DefaultSession):
                 if(response["class"] == 1):
                     print(
                         f'Detected normal flow (class ID {response["class"]}, using ), Key(srcip: {data["src_ip"]}, srcport: {data["src_port"]}, dstip: {data["dst_ip"]}, dstport: {data["dst_port"]}, proto: {data["protocol"]})')
-                    print(self.threshold)
+                    # print(self.threshold)
                     self.normal_flows += 1
                 else:
                     self.attack_flows += 1
@@ -166,7 +170,7 @@ class FlowSession(DefaultSession):
                         self.ipTable[data["src_ip"]] = 1
                     else:
                         self.ipTable[data["src_ip"]] += 1
-                    print(self.ipTable)
+                    # print(self.ipTable)
                     # print(self.threshold)
                     if(self.ipTable[data["src_ip"]] >= int(self.threshold)):
                         print("ONOS CALL")
